@@ -63,8 +63,8 @@ def block_1(name='Project Name', var='STATUS'):
                     id='starter-date-picker',
                     min_date_allowed=datetime(2000, 1, 1),
                     max_date_allowed=datetime(2020, 3, 20),
-                    initial_visible_month=datetime(2017, 8, 5),
-                    date=str(datetime(2017, 1, 1, 23, 59, 59))
+                    initial_visible_month=datetime(2000, 1, 1),
+                    date=str(datetime(2000, 1, 1, 23, 59, 59)), style={'textAlign':'center', 'width':'59%'}
                 )
             # html.P('01/01/2020', #className='six columns', 
             # style={'display':'inline-block', 'textAlign':'center', 'width':'59%', 'fontSize':'1.8rem'})
@@ -72,7 +72,7 @@ def block_1(name='Project Name', var='STATUS'):
 
 
         html.Div([
-            html.P('Lenght', #className='six columns', 
+            html.P('Total Days', #className='six columns', 
                     style={'display':'inline-block', 'width':'39%', 'fontSize':'1.6rem'}),
             html.P('20 Days', #className='six columns', 
                     style={'display':'inline-block', 'width':'59%','textAlign':'center', 'fontSize':'1.8rem'})
@@ -80,14 +80,14 @@ def block_1(name='Project Name', var='STATUS'):
 
 
         html.Div([
-            html.P('Finish',  
+            html.P('Final Date',  
                    style={'display':'inline-block', 'width':'39%', 'fontSize':'1.6rem'}),
             dcc.DatePickerSingle(
                     id='final-date-picker',
-                    min_date_allowed=datetime(1995, 8, 5),
-                    max_date_allowed=datetime(2017, 9, 19),
-                    initial_visible_month=datetime(2017, 8, 5),
-                    date=str(datetime(2020, 3, 20, 23, 59, 59))
+                    min_date_allowed=datetime(2000, 1, 1),
+                    max_date_allowed=datetime(2020, 3, 20),
+                    initial_visible_month=datetime(2020, 3, 20),
+                    date=str(datetime(2020, 3, 20, 23, 59, 59)), style={'textAlign':'center', 'width':'59%'}
                 )
             # html.P('21/01/2020', 
             #        style={'display':'inline-block', 'textAlign':'center', 'width':'59%', 'fontSize':'1.8rem'})
@@ -96,8 +96,8 @@ def block_1(name='Project Name', var='STATUS'):
 
         html.Div([
             html.Button('Run MCPM', type='submit', id='sql-button',  #className='ten columns', 
-                        style={'width':'100%', "background":"#0E7C7B", 'fontColor':'#D4F4DD'})
-        ], className='row', style={'margin':'3px 12px', 'height':'11.5%','padding':'0 25px'}),
+                        style={'width':'50%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)', 'margin':'0 auto'})
+        ], className='row', style={'margin':'15px auto', 'height':'11.5%','padding':'0 25px', 'textAlign':'center'}),
 
         html.Div([
             html.P('STATUS', className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'1.6rem', 'paddingLeft':'25px'}),
@@ -128,20 +128,24 @@ app.layout = html.Div([
     ## One line 
     html.Div([
         html.Div([
+            html.Div([
+                html.P("SELECT A PROJECT", style={'color':'rgb(212, 244, 221)','textAlign':'center'}),
+                dcc.Dropdown(
+                    id='dropdown-projects',
+                    options=[
+                        {'label': i, 'value': n} for i, n in options_projs
+                    ],
+                    multi=False, placeholder="Select a Project",
+                    value=None
+                )  
+            ], style={'width':'35%'})
+        ], className='eight columns', style={'align':'right',  'padding':'0 0 0 12px', 'margin': '15px 0'}),
+
+        html.Div([
             html.Img(
                 src=link_logo,
                 style={'width':'75%'})
-            ], className='four columns'),
-        html.Div([
-            dcc.Dropdown(
-                id='dropdown-projects',
-                options=[
-                    {'label': i, 'value': n} for i, n in options_projs
-                ],
-                multi=False, placeholder="Select a Project",
-                value=None
-            )  
-        ], className='three columns', style={'align':'right',  'padding':'0 0 0 80px', 'margin': '30px 0'})
+            ], className='four columns', style={'textAlign':'right'})
 
         ], className='row', style={'width':'90%', 'height':'12vh', 'background':'#4B1D3F',
                                    'padding':'12px 50px',
@@ -209,7 +213,7 @@ app.layout = html.Div([
             html.Div([
                 # button
                 html.Div([
-                    html.P("SELECT THE GRAPH: ", style={'fontWeight':'bold', 'textAlign':'center'}),
+                    html.P("SELECT THE GRAPH: ", style={'fontWeight':'bold', 'textAlign':'center', 'color':'rgb(212, 244, 221)'}),
                     drop_down_graph()
                 ], className='five columns', style={'display':'right', 'height':'100%'} )
             ], className='row', style={'height':'25%', 'background':'#D62246', 'padding':'1vh 3vw', 'margin':'1vh 5vw'}),
@@ -244,7 +248,7 @@ app.layout = html.Div([
 def _update_graph1(proj_name):
 
     if proj_name is None:
-        return "select the Proj" 
+        return "None Selected   " 
     else: 
         return proj_name
 
@@ -293,7 +297,7 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
         'date': np.random.choice(pd.date_range('1/1/2011', periods=365, 
                                  freq='D'), 50, replace=False)})
 
-    print('run clicked', df)
+    # print('run clicked', df)
 
     return [df.to_json(date_format='iso', orient='split'), 
             (f"QUERY SIMULATION: SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")]
@@ -303,10 +307,12 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
               [Input('df-sharing','children'),
                Input('dropdown-graph', 'value')])
 def _update_graph1(df, query):
+
     if df is None:
         raise PreventUpdate
     else: 
         pass
+
     df_ = pd.read_json(df, orient='split')
 
     time.sleep(3)
