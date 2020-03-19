@@ -8,6 +8,8 @@ import time
 import pandas as pd
 import numpy as np
 import plotly_express as px
+from random import random
+from dash.exceptions import PreventUpdate
 
 
 app_name = "Noah app"
@@ -35,18 +37,22 @@ app.config.suppress_callback_exceptions = True
 link_logo = '/assets/logo/Firewatch_Logo.png'
 title_var='Teste only 123 12 3 123 '
 
-projects_list = ['proj1', 'proj2', 'proj3', 'proj4']
+projs_list = ['proj1', 'proj2', 'proj3', 'proj4']
+var_list = ['float', 'ints', 'langs', 'date']
 
+options_projs = zip(projs_list, var_list)
+
+print(options_projs)
 
 def block_1(name='Project Name', var='STATUS'):
 
     return html.Div([
 
         html.Div([
-            html.P(name, className='six columns',
+            html.P('Project Name', className='six columns',
                    style={'display':'inline-block', 'fontSize':'1.6rem', 'width':'39%'}),
 
-            html.P(var, className='six columns', 
+            html.P(id='proj-name', className='six columns', 
                    style={'display':'inline-block', 'fontSize':'1.8rem', 'textAlign':'center', 'width':'59%'})
         ], className='row', style={'margin':'3px 12px 0', 'height':'11.5%','padding':'5px 0 0 25px'}), 
 
@@ -126,6 +132,17 @@ app.layout = html.Div([
                 src=link_logo,
                 style={'width':'75%'})
             ], className='four columns'),
+        html.Div([
+            dcc.Dropdown(
+                id='dropdown-projects',
+                options=[
+                    {'label': i, 'value': n} for i, n in options_projs
+                ],
+                multi=False, placeholder="Select a Project",
+                value=None
+            )  
+        ], className='three columns', style={'align':'right',  'padding':'0 0 0 80px', 'margin': '30px 0'})
+
         ], className='row', style={'width':'90%', 'height':'12vh', 'background':'#4B1D3F',
                                    'padding':'12px 50px',
                                    'margin':'.5vh 0 1vh'}),
@@ -208,33 +225,65 @@ app.layout = html.Div([
 
 
         ], className='eight columns')
-    ], className='row', style={'width':'100%', 'height':'75vh'})
 
+    ], className='row', style={'width':'100%', 'height':'75vh'}),
+
+    html.Div([
+        html.Div([
+                html.P(id='query-output', style={'fontSize':'20px'})
+        ], className='twelve columns')
+    ], className='row')
 
 ], className='container')
 
 
-from random import random
-from dash.exceptions import PreventUpdate
 
-@app.callback(Output('df-sharing','children'),
-              [Input('sql-button', 'n_clicks')] ,
-              [State('starter-date-picker', 'date'),
-               State('final-date-picker', 'date')]
+@app.callback(Output('proj-name','children'),
+             [Input('dropdown-projects', 'value')]
               )
-def _update_graph1(run_query, date_start, date_final):
+def _update_graph1(proj_name):
 
-    if run_query is None:
+    if proj_name is None:
+        return "select the Proj" 
+    else: 
+        return proj_name
+
+
+# @app.callback(Output('df-sharing','children'),
+#               [Input('dropdown-projects', 'value')],
+#               [State('starter-date-picker', 'date'),
+#                State('final-date-picker', 'date')]
+#               )
+# def _update_graph1(run_query, date_start, date_final):
+
+#     if run_query is None:
+#         raise PreventUpdate
+#     else: 
+#         pass
+
+#     return
+
+@app.callback([Output('df-sharing','children'),
+               Output('query-output', 'children')],
+              [Input('sql-button', 'n_clicks')],
+              [State('starter-date-picker', 'date'),
+               State('final-date-picker', 'date'),
+               State('dropdown-projects', 'value')]
+              )
+def _update_graph1(run_button, date_start, date_final, proj_name):
+
+    if run_button is None:
         raise PreventUpdate
     else: 
         pass
+
     date_start = pd.to_datetime(date_start)
     date_final = pd.to_datetime(date_final)
 
-    print(f"SELECT * FROM proj_name WHERE date >= {date_start} and date <= {date_final}")
+    print(f"SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")
 
     # print((date_final - date_start).days)
-
+    
     # df = pd.read_sql('SELECT * FROM tweets')
     # print('balbablablalbal', run_query, date_start, date_final)
     df = pd.DataFrame({ 
@@ -244,24 +293,27 @@ def _update_graph1(run_query, date_start, date_final):
         'date': np.random.choice(pd.date_range('1/1/2011', periods=365, 
                                  freq='D'), 50, replace=False)})
 
-    print('run clicked', run_query)
+    print('run clicked', df)
 
-    return df.to_json(date_format='iso', orient='split')
+    return [df.to_json(date_format='iso', orient='split'), 
+            (f"QUERY SIMULATION: SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")]
     
 
 @app.callback(Output('graph-princ1','figure'),
               [Input('df-sharing','children'),
                Input('dropdown-graph', 'value')])
 def _update_graph1(df, query):
-
+    if df is None:
+        raise PreventUpdate
+    else: 
+        pass
     df_ = pd.read_json(df, orient='split')
-
 
     time.sleep(3)
 
     if query == '2':
         val_count = df_.ints.value_counts().reset_index()
-        fig = px.hist(val_count, x='index', y='ints', title=title_var)
+        fig = px.scatter(val_count, x='index', y='ints', title=title_var)
         fig.update_layout(title_x=.5)
         return fig
         
