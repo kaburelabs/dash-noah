@@ -222,13 +222,13 @@ def _update_graph1(run_query, date_start, date_final):
         pass
     date_start = pd.to_datetime(date_start)
     date_final = pd.to_datetime(date_final)
-    
+
     print(f"SELECT * FROM proj_name WHERE date >= {date_start} and date <= {date_final}")
 
-    print((date_final - date_start).days)
+    # print((date_final - date_start).days)
 
-    #df = pd.read_sql('SELECT * FROM tweets')
-    print('balbablablalbal', run_query, date_start, date_final)
+    # df = pd.read_sql('SELECT * FROM tweets')
+    # print('balbablablalbal', run_query, date_start, date_final)
     df = pd.DataFrame({ 
         'float': np.random.randn(50),
         'ints': np.random.choice( [5, 7, 8, 18, 20, 5, 3, 14, ], 50),
