@@ -24,6 +24,14 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.title = app_name
 
+# server instance to run map when deploying
+server = app.server
+
+# Since I am adding callbacks to elements that don’t ~
+# exist in the app.layout as they are spread throughout files
+app.config.suppress_callback_exceptions = True
+
+
 link_logo = '/assets/logo/Firewatch_Logo.png'
 title_var='Teste only 123 12 3 123 '
 
@@ -253,13 +261,13 @@ def _update_graph1(df, query):
 
     if query == '2':
         val_count = df_.ints.value_counts().reset_index()
-        fig = px.bar(val_count, x='index', y='ints', title=title_var)
+        fig = px.hist(val_count, x='index', y='ints', title=title_var)
         fig.update_layout(title_x=.5)
         return fig
         
     elif query == '3':
         #val_count = df_.langs.value_counts().reset_index()
-        fig = px.box(df_, x='langs', y='float', title=title_var)
+        fig = px.box(df_, x='langs', y='float', title=(str(title_var) + str(3)))
         fig.update_layout(title_x=.5)
         return fig
         
