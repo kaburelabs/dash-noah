@@ -15,7 +15,7 @@ from dash.exceptions import PreventUpdate
 app_name = "Noah app"
 
 ## CSS EXTERNAL FILE
-external_stylesheets = ['https://codepen.io/kaburelabs/pen/xxGRXWa.css', 
+external_stylesheets = [#'https://codepen.io/kaburelabs/pen/xxGRXWa.css', 
                         #"https://codepen.io/chriddyp/pen/brPBPO.css",
                         'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
                         'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css']
@@ -186,7 +186,7 @@ app.layout = html.Div([
 
             ], className='row', style={'width':'90%', 'height':'90px', 'background':'#4B1D3F',
                                     'padding':'12px 50px',
-                                    'margin':'.5vh 0 1vh'}),
+                                    'margin':'0px 0px 5px'}),
 
         # painel and graph
         # Two different blocks
@@ -199,7 +199,7 @@ app.layout = html.Div([
                     html.Div([
                         block_1()
                     ])
-                ], className='row', style={'background':'#D4F4DD', 'padding':'1vh 0'}),
+                ], className='row', style={'background':'#D4F4DD', 'padding':'5px 0'}),
 
                 ## Upload Tasks
                 html.Div([
@@ -209,7 +209,7 @@ app.layout = html.Div([
                         html.Div([
                         dcc.Upload(html.Button('Upload File'), style={'width':'80%'}),
                         ], className='five columns', style={'display':'inline-block', 'margin':'5px 0'})
-                ], className='row', style={'height':'10.5%', 'padding:':'.5vh'}),
+                ], className='row', style={'height':'10.5%', 'padding:':'5px'}),
                 ## Upload Calendar
                 html.Div([
                         html.Div([
@@ -267,7 +267,7 @@ app.layout = html.Div([
 
             ], className='eight columns')
 
-        ], className='row', style={'width':'100%', 'height':'75vh'}),
+        ], className='row', style={'width':'100%', 'height':'600px'}),
 
         html.Div([
             html.Div([
