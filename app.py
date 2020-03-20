@@ -96,8 +96,8 @@ def block_1(name='Project Name', var='STATUS'):
 
         html.Div([
             html.Button('Run MCPM', type='submit', id='sql-button',  #className='ten columns', 
-                        style={'width':'50%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)', 'margin':'0 auto'})
-        ], className='row', style={'margin':'15px auto', 'height':'20.5%','padding':'0 25px', 'textAlign':'center'}),
+                        style={'width':'70%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)', 'margin':'0 auto', 'height':'90%'})
+        ], className='row', style={'height':'20.5%','padding':'0 15px', 'textAlign':'center'}),
 
         html.Div([
             html.P('STATUS', className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'1.6rem', 'paddingLeft':'25px'}),
@@ -143,7 +143,7 @@ app.layout = html.Div([
 
         ], className='two columns', style={'align':'right',  'padding':'0 0 0 12px', 'margin': '15px 0'}),
         html.Div([ 
-            html.Button("Submit", id='button-project', style={'width':'25%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)'}
+            html.Button("Select", id='button-project', style={'width':'25%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)'}
             )  
             ], className='six columns', style={ 'display':'inline-block',  'padding':'40px 0 0 12px', 'margin': '5px 0'}), 
 
