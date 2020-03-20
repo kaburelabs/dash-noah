@@ -34,7 +34,7 @@ server = app.server
 app.config.suppress_callback_exceptions = True
 
 
-link_logo = '/assets/logo/Firewatch_Logo.png'
+link_logo = '/assets/logo/logo-placeholder.png'
 title_var='Teste only 123 12 3 123 '
 
 projs_list = ['proj1', 'proj2', 'proj3', 'proj4']
@@ -150,10 +150,10 @@ app.layout = html.Div([
         html.Div([
             html.Img(
                 src=link_logo,
-                style={'width':'75%'})
-            ], className='four columns', style={'textAlign':'right'})
+                style={'width':'165px'})
+            ], className='four columns', style={'textAlign':'right', 'padding':'15px 0', 'float':'right'})
 
-        ], className='row', style={'width':'90%', 'height':'12vh', 'background':'#4B1D3F',
+        ], className='row', style={'width':'90%', 'height':'90px', 'background':'#4B1D3F',
                                    'padding':'12px 50px',
                                    'margin':'.5vh 0 1vh'}),
 
@@ -222,7 +222,7 @@ app.layout = html.Div([
                     html.P("SELECT THE GRAPH: ", style={'fontWeight':'bold', 'textAlign':'center', 'color':'rgb(212, 244, 221)'}),
                     drop_down_graph()
                 ], className='five columns', style={'display':'right', 'height':'100%', 'width':'25%'} )
-            ], className='row', style={'height':'80px', 'background':'#D62246', 'padding':'10px 35px', 'margin':'15px 50px'}),
+            ], className='row', style={'height':'80px', 'background':'#D62246', 'padding':'10px 35px', 'margin':'0px 50px'}),
 
             html.Div([
                 dcc.Loading(
