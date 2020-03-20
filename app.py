@@ -54,7 +54,7 @@ def block_1(name='Project Name', var='STATUS'):
 
             html.P(id='proj-name', className='six columns', 
                    style={'display':'inline-block', 'fontSize':'1.8rem', 'textAlign':'center', 'width':'59%'})
-        ], className='row', style={'margin':'3px 12px 0', 'height':'11.5%','padding':'5px 0 0 25px'}), 
+        ], className='row', style={'margin':'3px 12px 0', 'height':'15.5%','padding':'5px 0 0 25px'}), 
 
         html.Div([
             html.P('Start Date', #className='six columns', 
@@ -68,7 +68,7 @@ def block_1(name='Project Name', var='STATUS'):
                 )
             # html.P('01/01/2020', #className='six columns', 
             # style={'display':'inline-block', 'textAlign':'center', 'width':'59%', 'fontSize':'1.8rem'})
-        ], className='row', style={'margin':'1.5px 12px 0', 'height':'11.5%','padding':'5px 0 0 25px'}), 
+        ], className='row', style={'margin':'1.5px 12px 0', 'height':'15.5%','padding':'5px 0 0 25px'}), 
 
 
         html.Div([
@@ -76,7 +76,7 @@ def block_1(name='Project Name', var='STATUS'):
                     style={'display':'inline-block', 'width':'39%', 'fontSize':'1.6rem'}),
             html.P('20 Days', #className='six columns', 
                     style={'display':'inline-block', 'width':'59%','textAlign':'center', 'fontSize':'1.8rem'})
-        ], className='row', style={'margin':'1.5px 12px 0', 'height':'11.5%','padding':'5px 0 0 25px'}), 
+        ], className='row', style={'margin':'1.5px 12px 0', 'height':'16.5%','padding':'5px 0 0 25px'}), 
 
 
         html.Div([
@@ -91,20 +91,20 @@ def block_1(name='Project Name', var='STATUS'):
                 )
             # html.P('21/01/2020', 
             #        style={'display':'inline-block', 'textAlign':'center', 'width':'59%', 'fontSize':'1.8rem'})
-        ], className='row', style={'margin':'1.5px 12px 0', 'height':'11.5%', 'padding':'5px 0 0 25px'}), 
+        ], className='row', style={'margin':'1.5px 12px 0', 'height':'15.5%', 'padding':'5px 0 0 25px'}), 
 
 
         html.Div([
             html.Button('Run MCPM', type='submit', id='sql-button',  #className='ten columns', 
                         style={'width':'50%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)', 'margin':'0 auto'})
-        ], className='row', style={'margin':'15px auto', 'height':'11.5%','padding':'0 25px', 'textAlign':'center'}),
+        ], className='row', style={'margin':'15px auto', 'height':'20.5%','padding':'0 25px', 'textAlign':'center'}),
 
         html.Div([
             html.P('STATUS', className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'1.6rem', 'paddingLeft':'25px'}),
             html.P('RUNNING', className='six columns', style={'display':'inline-block', 'textAlign':'center', 'fontSize':'1.8rem'})
-        ], className='row', style={'margin':'10px 12px 0', 'height':'11.5%'}), 
+        ], className='row', style={'margin':'10px 12px 0', 'height':'15.5%'}), 
 
-    ], style={'height':'50%', 'margin':'2.5vh 0 1.5vh'})
+    ], style={'height':'300px', 'margin':'2.5vh 0 1.5vh'})
 
 
 
@@ -135,11 +135,17 @@ app.layout = html.Div([
                     options=[
                         {'label': i, 'value': n} for i, n in options_projs
                     ],
-                    multi=False, placeholder="Select a Project",
+                    multi=False, 
+                    placeholder="Select a Project",
                     value=None
                 )  
-            ], style={'width':'35%'})
-        ], className='eight columns', style={'align':'right',  'padding':'0 0 0 12px', 'margin': '15px 0'}),
+            ], style={'width':'100%', 'display':'inline-block'}), 
+
+        ], className='two columns', style={'align':'right',  'padding':'0 0 0 12px', 'margin': '15px 0'}),
+        html.Div([ 
+            html.Button("Submit", id='button-project', style={'width':'25%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)'}
+            )  
+            ], className='six columns', style={ 'display':'inline-block',  'padding':'40px 0 0 12px', 'margin': '5px 0'}), 
 
         html.Div([
             html.Img(
@@ -215,17 +221,17 @@ app.layout = html.Div([
                 html.Div([
                     html.P("SELECT THE GRAPH: ", style={'fontWeight':'bold', 'textAlign':'center', 'color':'rgb(212, 244, 221)'}),
                     drop_down_graph()
-                ], className='five columns', style={'display':'right', 'height':'100%'} )
-            ], className='row', style={'height':'25%', 'background':'#D62246', 'padding':'1vh 3vw', 'margin':'1vh 5vw'}),
+                ], className='five columns', style={'display':'right', 'height':'100%', 'width':'25%'} )
+            ], className='row', style={'height':'80px', 'background':'#D62246', 'padding':'10px 35px', 'margin':'15px 50px'}),
 
             html.Div([
                 dcc.Loading(
                     id="loading-2",
                     children=[
                         html.Div([
-                            dcc.Graph(id='graph-princ1', style={'width':'100%', 'height':'60vh'})
+                            dcc.Graph(id='graph-princ1', style={'width':'100%', 'height':'450px'})
                 ])], type='graph', style={'margin':'15% 0'})
-            ], className='row', style={'width':'100%', 'margin':'1vh auto', 'padding':'.5vh 0'}),
+            ], className='row', style={'width':'100%', 'margin':'15px auto', 'padding':'.5vh 0'}),
 
 
         ], className='eight columns')
@@ -290,6 +296,7 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
     
     # df = pd.read_sql('SELECT * FROM tweets')
     # print('balbablablalbal', run_query, date_start, date_final)
+
     df = pd.DataFrame({ 
         'float': np.random.randn(50),
         'ints': np.random.choice( [5, 7, 8, 18, 20, 5, 3, 14, ], 50),
