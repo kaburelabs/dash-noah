@@ -15,11 +15,8 @@ from dash.exceptions import PreventUpdate
 app_name = "Noah app"
 
 ## CSS EXTERNAL FILE
-external_stylesheets = [#'https://codepen.io/kaburelabs/pen/xxGRXWa.css', 
-                        #"https://codepen.io/chriddyp/pen/brPBPO.css",
-                        'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
+external_stylesheets = ['https://use.fontawesome.com/releases/v5.8.1/css/all.css',
                         'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css']
-
 
 ## Defining the instance of dash
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -172,11 +169,11 @@ app.layout = html.Div([
                     )  
                 ], style={'width':'100%', 'display':'inline-block'}), 
 
-            ], className='two columns', style={'align':'right',  'padding':'0 0 0 12px', 'margin': '15px 0'}),
+            ], className='three columns', style={'align':'right',  'padding':'0 0 0 12px', 'margin': '15px 0'}),
             html.Div([ 
-                html.Button("Select", id='button-project', style={'width':'25%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)'}
+                html.Button("Select", id='button-project', style={'width':'30%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)'}
                 )  
-                ], className='six columns', style={ 'display':'inline-block',  'padding':'40px 0 0 12px', 'margin': '5px 0'}), 
+                ], className='five columns', style={ 'display':'inline-block',  'padding':'40px 0 0 12px', 'margin': '5px 0'}), 
 
             html.Div([
                 html.Img(
@@ -184,9 +181,10 @@ app.layout = html.Div([
                     style={'width':'165px'})
                 ], className='four columns', style={'textAlign':'right', 'padding':'15px 0', 'float':'right'})
 
-            ], className='row', style={'width':'90%', 'height':'90px', 'background':'#4B1D3F',
-                                    'padding':'12px 50px',
-                                    'margin':'0px 0px 5px'}),
+            ], className='row', style={'width':'100%', 'height':'90px', 
+                                       'background':'#4B1D3F',
+                                       'padding':'12px 50px',
+                                       'margin':'0px 0px 5px'}),
 
         # painel and graph
         # Two different blocks
@@ -240,7 +238,7 @@ app.layout = html.Div([
                 ], className='row', style={'height':'10.5%', 'padding:':'1vh'}),
                 
             ], className='four columns',  
-            style={'height':'70vh'}),
+            style={'height':'600px'}),
 
 
 
@@ -252,7 +250,7 @@ app.layout = html.Div([
                     html.Div([
                         html.P("SELECT THE GRAPH: ", style={'fontWeight':'bold', 'textAlign':'center', 'color':'rgb(212, 244, 221)'}),
                         drop_down_graph()
-                    ], className='five columns', style={'display':'right', 'height':'100%', 'width':'25%'} )
+                    ], className='five columns', style={'display':'right', 'height':'100%', 'width':'40%'} )
                 ], className='row', style={'height':'80px', 'background':'#D62246', 'padding':'10px 35px', 'margin':'0px 50px'}),
 
                 html.Div([
