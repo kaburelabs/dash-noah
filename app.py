@@ -96,7 +96,7 @@ def block_1(name='Project Name', var='STATUS'):
         html.Div([
             html.P('Total Days', #className='six columns', 
                     style={'display':'inline-block', 'width':'39%', 'fontSize':'1.6rem'}),
-            html.P('20 Days', #className='six columns', 
+            html.P(id='days-diff', #className='six columns', 
                     style={'display':'inline-block', 'width':'59%','textAlign':'center', 'fontSize':'1.8rem'})
         ], className='row', style={'margin':'1.5px 12px 0', 'height':'16.5%'}), 
 
@@ -283,23 +283,9 @@ def _update_graph1(button, proj_name):
 
 
 
-# @app.callback([Output('df-sharing','children'),
-#                Output('query-output', 'children')],
-#               [Input('button-project', 'n_clicks')],
-#               [State('starter-date-picker', 'date'),
-#                State('final-date-picker', 'date'),
-#                State('dropdown-projects', 'value')]
-#               )
-# def _update_graph1(run_button, date_start, date_final, proj_name):
-
-#     if run_button is None:
-#         raise PreventUpdate
-#     else: 
-#         pass
-
-
 @app.callback([Output('df-sharing','children'),
-               Output('query-output', 'children')],
+               Output('query-output', 'children'),
+               Output('days-diff', 'children')],
               [Input('sql-button', 'n_clicks')],
               [State('starter-date-picker', 'date'),
                State('final-date-picker', 'date'),
@@ -314,7 +300,8 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
 
     date_start = pd.to_datetime(date_start)
     date_final = pd.to_datetime(date_final)
-
+    days_diff = (date_final - date_start).days
+    print(days_diff)
     print(f"SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")
 
     # print((date_final - date_start).days)
@@ -332,7 +319,8 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
     # print('run clicked', df)
 
     return [df.to_json(date_format='iso', orient='split'), 
-            (f"QUERY SIMULATION: SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")]
+            (f"QUERY SIMULATION: SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}"),
+             days_diff ]
     
 
 @app.callback(Output('graph-princ1','figure'),
