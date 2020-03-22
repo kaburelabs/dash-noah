@@ -81,6 +81,7 @@ def parse_contents(contents, filename, date):
             'There was an error processing this file.'
         ])
     print(df)
+
     return html.Div([
         html.H5(filename),
         html.H6(datetime.datetime.fromtimestamp(date)),
@@ -100,7 +101,7 @@ def parse_contents(contents, filename, date):
         })
     ])
 
-def block_1(name='Project Name', var='STATUS'):
+def block_1():
 
     return html.Div([
 
@@ -207,14 +208,16 @@ app.layout = html.Div([
                 ], className='six columns', style={'align':'right'}),
 
                 html.Div([ 
-                    html.Button("New Project", id='button-project', style={'width':'100%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)'})  
+                    html.Button("New Project", id='button-project', 
+                                style={'width':'100%', "background":"#0E7C7B",
+                                       'color':'rgb(212, 244, 221)'})  
                     ], className='six columns', style={ 'display':'inline-block',  'float':'right'}), 
                 ])
                 ], className='five columns', style={'float':'right', 'padding':'25px 25px'})
             ], className='row', style={ 'height':'90px', 
                                        'background':'#4B1D3F',
                                        'padding':'12px 50px',
-                                       'margin':'0px 0px 5px'}),
+                                       'margin':'0px 0px 24px'}),
 
         # painel and graph
         # Two different blocks
@@ -228,47 +231,49 @@ app.layout = html.Div([
                     html.Div([
                         block_1()
                     ])
-                ], className='row', style={'background':'#D4F4DD', 'padding':'5px 0'}),
+                ], className='row', style={'background':'#D4F4DD', 'padding':'5px 0', 'margin':'0 0 24px'}),
 
                 ## Upload Tasks
                 html.Div([
                         html.Div([
-                            html.P("Upload Tasks"),
-                        ], className='seven columns', style={'display':'inline-block', 'margin':'15px 0', 'fontSize':'1.6rem', 'padding':'0 25px'}),
+                            html.P("Upload Tasks", style={'margin':'8px 0'}),
+                        ], className='seven columns', style={'fontSize':'1.6rem'}),
                         html.Div([
                           dcc.Upload(id='upload-tasks', children=[html.Button('Upload File')], style={'width':'80%'}),
-                        ], className='five columns', style={'display':'inline-block', 'margin':'5px 0'})
-                ], className='row', style={'height':'10.5%', 'padding:':'5px'}),
+                        ], className='five columns')
+                ], className='row', style={'height':'10.5%'}),
+
                 ## Upload Calendar
                 html.Div([
                         html.Div([
-                            html.P("Upload Calendar"),
-                        ], className='seven columns', style={'display':'inline-block', 'margin':'15px 0', 'fontSize':'1.6rem', 'padding':'0 25px'}),
+                            html.P("Upload Calendar", style={'margin':'8px 0'}),
+                        ], className='seven columns', style={'fontSize':'1.6rem', }),
                         html.Div([
                         dcc.Upload(html.Button('Upload File')),
-                        ], className='five columns', style={'display':'inline-block', 'margin':'5px 0' })
-                ], className='row', style={'height':'10.5%', 'padding:':'1vh'}),
+                        ], className='five columns')
+                ], className='row', style={'height':'10.5%',}),
+
                 ## Problems Report
                 html.Div([
                         html.Div([
-                            html.P("Problems Report"),
-                        ], className='seven columns', style={'display':'inline-block', 'margin':'15px 0', 'fontSize':'1.6rem', 'padding':'0 25px'}),
+                            html.P("Problems Report", style={ 'margin':'8px 0'}),
+                        ], className='seven columns', style={'fontSize':'1.6rem', }),
                         html.Div([
-                        dcc.Upload(html.Button('Download')),
-                        ], className='five columns', style={'display':'inline-block', 'margin':'5px 0'})
-                ], className='row', style={'height':'10.5%', 'padding:':'1vh'}),
+                        dcc.Upload(html.Button('Download', style={'width':'146px'})),
+                        ], className='five columns', )
+                ], className='row', style={'height':'10.5%'}),
                 
                 ## Download Results
                 html.Div([
                         html.Div([
-                            html.P("Download Results"),
-                        ], className='seven columns', style={'display':'inline-block', 'margin':'15px 0', 'fontSize':'1.6rem', 'padding':'0 25px'}),
+                            html.P("Download Results", style={'margin':'8px 0' }),
+                        ], className='seven columns', style={'fontSize':'1.6rem'}),
                         html.Div([
-                        dcc.Upload(html.Button('Download')),
-                        ], className='five columns', style={'display':'inline-block', 'margin':'5px auto'})
-                ], className='row', style={'height':'10.5%', 'padding:':'1vh'}),
-            ], className='four columns',  
-            style={'height':'600px'}),
+                        dcc.Upload(html.Button('Download', style={'width':'146px'})),
+                        ], className='five columns')
+                ], className='row', style={'height':'10.5%'}),
+
+            ], className='four columns', style={'height':'600px'}),
 
 
 
@@ -281,7 +286,7 @@ app.layout = html.Div([
                         # html.P("SELECT THE GRAPH: ", style={'fontWeight':'bold', 'textAlign':'center', 'color':'rgb(212, 244, 221)'}),
                         drop_down_graph()
                     ], className='eight columns', style={'display':'right', 'height':'100%', 'width':'40%'} )
-                ], className='row', style={'height':'60px', 'background':'#D62246', 'padding':'10px 35px'   }),
+                ], className='row', style={'background':'#D62246', 'padding':'24px 35px'   }),
                 ## Graph
                 html.Div([
                     dcc.Loading(
@@ -289,7 +294,7 @@ app.layout = html.Div([
                         children=[
                             html.Div([
                                 dcc.Graph(id='graph-princ1', style={'width':'100%', 'height':'450px'})
-                    ])], type='graph')
+                    ])], type='graph', style={'margin':'100px'})
                 ], className='row', style={'width':'100%', 'margin':'15px auto', 'padding':'.5vh 0'}),
             ], className='eight columns', style={'marginLeft':'4%'})
         ], className='row', style={'width':'100%', 'height':'600px'}),
@@ -313,7 +318,6 @@ app.layout = html.Div([
              [Input('dropdown-projects', 'value')]
               )
 def _update_graph1(proj_name):
-
 
     if proj_name is None:
         return ["None Selected", "None", "None", "None" ]
