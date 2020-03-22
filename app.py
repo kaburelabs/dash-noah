@@ -30,16 +30,10 @@ server = app.server
 # exist in the app.layout as they are spread throughout files
 app.config.suppress_callback_exceptions = True
 
+proj_list = ['proj1', 'proj2', 'proj3', 'proj4' ]
 
 link_logo = '/assets/logo/logo-placeholder.png'
 title_var='Teste only 123 12 3 123 '
-
-projs_list = ['proj1', 'proj2', 'proj3', 'proj4']
-var_list = ['float', 'ints', 'langs', 'date']
-
-options_projs = zip(projs_list, var_list)
-
-print(options_projs)
 
 
 def create_header(some_string):
@@ -68,6 +62,43 @@ def create_header(some_string):
 
     return header
 
+def parse_contents(contents, filename, date):
+
+    content_type, content_string = contents.split(',')
+
+    decoded = base64.b64decode(content_string)
+    try:
+        if 'csv' in filename:
+            # Assume that the user uploaded a CSV file
+            df = pd.read_csv(
+                io.StringIO(decoded.decode('utf-8')))
+        elif 'xls' in filename:
+            # Assume that the user uploaded an excel file
+            df = pd.read_excel(io.BytesIO(decoded))
+    except Exception as e:
+        print(e)
+        return html.Div([
+            'There was an error processing this file.'
+        ])
+    print(df)
+    return html.Div([
+        html.H5(filename),
+        html.H6(datetime.datetime.fromtimestamp(date)),
+
+        dash_table.DataTable(
+            data=df.to_dict('records'),
+            columns=[{'name': i, 'id': i} for i in df.columns]
+        ),
+
+        html.Hr(),  # horizontal line
+
+        # For debugging, display the raw contents provided by the web browser
+        html.Div('Raw Content'),
+        html.Pre(contents[0:200] + '...', style={
+            'whiteSpace': 'pre-wrap',
+            'wordBreak': 'break-all'
+        })
+    ])
 
 def block_1(name='Project Name', var='STATUS'):
 
@@ -82,38 +113,39 @@ def block_1(name='Project Name', var='STATUS'):
 
         html.Div([
             html.P('Start Date', #className='six columns', 
-                    style={'display':'inline-block', 'width':'39%', 'fontSize':'1.6rem'}),
-            dcc.DatePickerSingle(
-                    id='starter-date-picker',
-                    min_date_allowed=datetime(2019, 1, 1),
-                    max_date_allowed=datetime(2020, 3, 20),
-                    initial_visible_month=datetime(2019, 1, 1),
-                    placeholder='Select Date',
-                    #date=str(datetime(2019, 1, 1, 23, 59, 59)),
-                    style={'textAlign':'right', 'width':'59%', 'float':'right'})
+                    style={'display':'inline-block', 'width':'45%', 'fontSize':'1.6rem'}),
+            html.P(id='dateStart', style={'textAlign':'center', 'width':'54%', 'float':'right', 'fontSize':'1.8rem'})
+            # dcc.DatePickerSingle(
+            #         id='starter-date-picker',
+            #         min_date_allowed=datetime(2019, 1, 1),
+            #         max_date_allowed=datetime.today().strftime('%Y, %m, %d'),
+            #         initial_visible_month=datetime(2019, 1, 1),
+            #         placeholder='Select Date',
+            #         #date=str(datetime(2019, 1, 1, 23, 59, 59)),
+            #         style={'textAlign':'right', 'width':'59%', 'float':'right'})
         ], className='row', style={'margin':'1.5px 12px 0', 'height':'15.5%'}), 
 
         html.Div([
-            html.P('Total Days', #className='six columns', 
-                    style={'display':'inline-block', 'width':'39%', 'fontSize':'1.6rem'}),
+            html.P('Lengh (in months)', #className='six columns', 
+                    style={'display':'inline-block', 'width':'45%', 'fontSize':'1.6rem'}),
             html.P(id='days-diff', #className='six columns', 
-                    style={'display':'inline-block', 'width':'59%','textAlign':'center', 'fontSize':'1.8rem'})
+                    style={'display':'inline-block', 'width':'54%','textAlign':'center', 'fontSize':'1.8rem'})
         ], className='row', style={'margin':'1.5px 12px 0', 'height':'16.5%'}), 
 
 
         html.Div([
             html.P('Final Date',  
-                   style={'display':'inline-block', 'width':'39%', 'fontSize':'1.6rem'}),
-            dcc.DatePickerSingle(
-                    id='final-date-picker',
-                    min_date_allowed=datetime(2019, 1, 1),
-                    max_date_allowed=datetime(2020, 3, 20),
-                    initial_visible_month=datetime(2020, 3, 20),
-                    placeholder="Select Date", 
-                    #date=str(datetime(2020, 3, 20, 23, 59, 59)),
-                    style={'textAlign':'right', 'width':'59%', 'float':'right', })
+                   style={'display':'inline-block', 'width':'45%', 'fontSize':'1.6rem'}),
+            html.P(id='dateFinal', style={'textAlign':'center', 'width':'54%', 'float':'right', 'fontSize':'1.8rem'})
+            # dcc.DatePickerSingle(
+            #         id='final-date-picker',
+            #         min_date_allowed=datetime(2019, 1, 1),
+            #         max_date_allowed=datetime.today().strftime('%Y-%m-%d'),
+            #         initial_visible_month=datetime.today().strftime('%Y-%m-%d'),
+            #         placeholder="Select Date", 
+            #         #date=str(datetime(2020, 3, 20, 23, 59, 59)),
+            #         style={'textAlign':'right', 'width':'59%', 'float':'right', })
         ], className='row', style={'margin':'1.5px 12px 0', 'height':'15.5%'}), 
-
 
         html.Div([
             html.Button('Run MCPM', type='submit', id='sql-button',  #className='ten columns', 
@@ -144,38 +176,41 @@ def drop_down_graph():
     ], style={'margin':'0.5vh auto', 'height':'100%'})
 
 app.layout = html.Div([
-    create_header("Noah - Run SQL Application"),
+    #create_header("Noah - Run SQL Application"),
     html.Div([
         html.Div(id='df-sharing', style={'display': 'none'}),
         # header logo + select project
         ## One line 
         html.Div([
-            html.Div([
-                html.Div([
-                    html.P("SELECT A PROJECT", style={'color':'rgb(212, 244, 221)','textAlign':'center'}),
-                    dcc.Dropdown(
-                        id='dropdown-projects',
-                        options=[
-                            {'label': i, 'value': n} for i, n in options_projs
-                        ],
-                        multi=False, 
-                        placeholder="Select a Project",
-                        value=None
-                    )  
-                ], style={'width':'100%', 'display':'inline-block'}), 
-
-            ], className='three columns', style={'align':'right',  'padding':'0 0 0 12px', 'margin': '15px 0'}),
-            html.Div([ 
-                html.Button("Select", id='button-project', style={'width':'30%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)'}
-                )  
-                ], className='five columns', style={ 'display':'inline-block',  'padding':'40px 0 0 12px', 'margin': '5px 0'}), 
 
             html.Div([
                 html.Img(
                     src=link_logo,
-                    style={'width':'165px'})
-                ], className='four columns', style={'textAlign':'right', 'padding':'15px 0', 'float':'right'})
+                    style={'width':'120px'})
+                ], className='seven columns', style={ 'padding':'15px 0',}),
 
+        html.Div([
+            html.Div([
+                html.Div([
+                    html.Div([
+                        # html.P("SELECT A PROJECT", style={'color':'rgb(212, 244, 221)','textAlign':'center'}),
+                        dcc.Dropdown(
+                            id='dropdown-projects',
+                            options=[
+                                {'label': i, 'value': i} for i in proj_list
+                            ],
+                            multi=False, 
+                            placeholder="Select a Project",
+                            value=None
+                        )  
+                    ], style={'width':'100%', 'display':'inline-block'}), 
+                ], className='six columns', style={'align':'right'}),
+
+                html.Div([ 
+                    html.Button("New Project", id='button-project', style={'width':'100%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)'})  
+                    ], className='six columns', style={ 'display':'inline-block',  'float':'right'}), 
+                ])
+                ], className='five columns', style={'float':'right', 'padding':'25px 25px'})
             ], className='row', style={ 'height':'90px', 
                                        'background':'#4B1D3F',
                                        'padding':'12px 50px',
@@ -201,7 +236,7 @@ app.layout = html.Div([
                             html.P("Upload Tasks"),
                         ], className='seven columns', style={'display':'inline-block', 'margin':'15px 0', 'fontSize':'1.6rem', 'padding':'0 25px'}),
                         html.Div([
-                        dcc.Upload(html.Button('Upload File'), style={'width':'80%'}),
+                          dcc.Upload(id='upload-tasks', children=[html.Button('Upload File')], style={'width':'80%'}),
                         ], className='five columns', style={'display':'inline-block', 'margin':'5px 0'})
                 ], className='row', style={'height':'10.5%', 'padding:':'5px'}),
                 ## Upload Calendar
@@ -243,10 +278,10 @@ app.layout = html.Div([
                 # button
                 html.Div([
                     html.Div([
-                        html.P("SELECT THE GRAPH: ", style={'fontWeight':'bold', 'textAlign':'center', 'color':'rgb(212, 244, 221)'}),
+                        # html.P("SELECT THE GRAPH: ", style={'fontWeight':'bold', 'textAlign':'center', 'color':'rgb(212, 244, 221)'}),
                         drop_down_graph()
                     ], className='eight columns', style={'display':'right', 'height':'100%', 'width':'40%'} )
-                ], className='row', style={'height':'80px', 'background':'#D62246', 'padding':'10px 35px'   }),
+                ], className='row', style={'height':'60px', 'background':'#D62246', 'padding':'10px 35px'   }),
                 ## Graph
                 html.Div([
                     dcc.Loading(
@@ -256,7 +291,7 @@ app.layout = html.Div([
                                 dcc.Graph(id='graph-princ1', style={'width':'100%', 'height':'450px'})
                     ])], type='graph')
                 ], className='row', style={'width':'100%', 'margin':'15px auto', 'padding':'.5vh 0'}),
-            ], className='eight columns')
+            ], className='eight columns', style={'marginLeft':'4%'})
         ], className='row', style={'width':'100%', 'height':'600px'}),
 
         html.Div([
@@ -270,22 +305,41 @@ app.layout = html.Div([
 ], style={'overflow':'hidden'})
 
 
-@app.callback(Output('proj-name','children'),
-             [Input('button-project', 'n_clicks')],
-             [State('dropdown-projects', 'value')]
+@app.callback([Output('proj-name','children'),
+               Output('dateStart','children'),
+               Output('days-diff','children'),
+               Output('dateFinal','children')],
+             # [Input('button-project', 'n_clicks')],
+             [Input('dropdown-projects', 'value')]
               )
-def _update_graph1(button, proj_name):
+def _update_graph1(proj_name):
 
-    if button is None:
-        return "None Selected   " 
+
+    if proj_name is None:
+        return ["None Selected", "None", "None", "None" ]
     else: 
-        return proj_name
+        pass
+    df = pd.read_csv('data_simulation.csv', index_col=[0])
+    mask = df["project_name"] == proj_name
+
+    print(df)
+
+    df['StartDate'] = pd.to_datetime(df['StartDate'])
+    df['FinalDate'] = pd.to_datetime(df['FinalDate'])
+
+    df['diff'] = ((df['FinalDate'] - df['StartDate']) / np.timedelta64(1, 'M'))
+    df['diff'] = df['diff'].astype(int)
+    print(df['diff'])
+    final = df[mask].to_dict('row')[0]
+
+    return [final['project_name'], final['StartDate'].strftime('%Y-%m-%d'), final['diff'], final['FinalDate'].strftime('%Y-%m-%d')]
 
 
 
 @app.callback([Output('df-sharing','children'),
                Output('query-output', 'children'),
-               Output('days-diff', 'children')],
+               #Output('days-diff', 'children')
+               ],
               [Input('sql-button', 'n_clicks')],
               [State('starter-date-picker', 'date'),
                State('final-date-picker', 'date'),
@@ -300,7 +354,7 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
 
     date_start = pd.to_datetime(date_start)
     date_final = pd.to_datetime(date_final)
-    days_diff = (date_final - date_start).days
+    days_diff = round((date_final - date_start).days / 30)
     print(days_diff)
     print(f"SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")
 
@@ -322,7 +376,7 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
             (f"QUERY SIMULATION: SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}"),
              days_diff ]
     
-
+    
 @app.callback(Output('graph-princ1','figure'),
               [Input('df-sharing','children'),
                Input('dropdown-graph', 'value')])
@@ -362,6 +416,17 @@ def _update_graph1(df, query):
         return fig
 
 
+# @app.callback(Output('proj-name', 'children'),
+#               [Input('upload-tasks', 'contents')],
+#               [State('upload-tasks', 'filename'),
+#                # State('upload-tasls', 'last_modified')
+#                ])
+# def update_output(list_of_contents, list_of_names):
+#     if list_of_contents is not None:
+#         children = [
+#             parse_contents(c, n) for c, n in zip(list_of_contents, list_of_names)]
+
+#         return list_of_names
 
 
 
