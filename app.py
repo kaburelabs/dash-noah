@@ -322,17 +322,19 @@ def _update_graph1(proj_name):
     df = pd.read_csv('data_simulation.csv', index_col=[0])
     mask = df["project_name"] == proj_name
 
-    print(df)
 
     df['StartDate'] = pd.to_datetime(df['StartDate'])
     df['FinalDate'] = pd.to_datetime(df['FinalDate'])
 
     df['diff'] = ((df['FinalDate'] - df['StartDate']) / np.timedelta64(1, 'M'))
     df['diff'] = df['diff'].astype(int)
-    print(df['diff'])
+
     final = df[mask].to_dict('row')[0]
 
-    return [final['project_name'], final['StartDate'].strftime('%Y-%m-%d'), final['diff'], final['FinalDate'].strftime('%Y-%m-%d')]
+    return [final['project_name'], 
+            final['StartDate'].strftime('%Y-%m-%d'), 
+            final['diff'], 
+            final['FinalDate'].strftime('%Y-%m-%d')]
 
 
 
@@ -341,9 +343,9 @@ def _update_graph1(proj_name):
                #Output('days-diff', 'children')
                ],
               [Input('sql-button', 'n_clicks')],
-              [State('starter-date-picker', 'date'),
-               State('final-date-picker', 'date'),
-               State('dropdown-projects', 'value')]
+              [State('dateStart', 'children'),
+               State('dateFinal', 'children'),
+               State('proj-name', 'children')]
               )
 def _update_graph1(run_button, date_start, date_final, proj_name):
 
@@ -355,7 +357,7 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
     date_start = pd.to_datetime(date_start)
     date_final = pd.to_datetime(date_final)
     days_diff = round((date_final - date_start).days / 30)
-    print(days_diff)
+
     print(f"SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")
 
     # print((date_final - date_start).days)
@@ -370,11 +372,8 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
         'date': np.random.choice(pd.date_range('1/1/2011', periods=365, 
                                  freq='D'), 50, replace=False)})
 
-    # print('run clicked', df)
-
     return [df.to_json(date_format='iso', orient='split'), 
-            (f"QUERY SIMULATION: SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}"),
-             days_diff ]
+            (f"QUERY SIMULATION: SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")]
     
     
 @app.callback(Output('graph-princ1','figure'),
