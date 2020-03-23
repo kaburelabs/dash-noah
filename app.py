@@ -107,15 +107,15 @@ def block_1():
 
         html.Div([
             html.P('Project Name', className='six columns',
-                   style={'display':'inline-block', 'fontSize':'1.6rem', 'width':'39%'}),
+                   style={'display':'inline-block', 'fontSize':'17px', 'width':'39%'}),
             html.P(id='proj-name', className='six columns', 
-                   style={'display':'inline-block', 'fontSize':'1.8rem', 'textAlign':'center', 'width':'59%'})
+                   style={'display':'inline-block', 'fontSize':'18px', 'textAlign':'center', 'width':'59%'})
         ], className='row', style={'margin':'1.5px 12px 0', 'height':'15.5%'}), 
 
         html.Div([
             html.P('Start Date', #className='six columns', 
-                    style={'display':'inline-block', 'width':'45%', 'fontSize':'1.6rem'}),
-            html.P(id='dateStart', style={'textAlign':'center', 'width':'54%', 'float':'right', 'fontSize':'1.8rem'})
+                    style={'display':'inline-block', 'width':'45%', 'fontSize':'17px'}),
+            html.P(id='dateStart', style={'textAlign':'center', 'width':'54%', 'float':'right', 'fontSize':'18px'})
             # dcc.DatePickerSingle(
             #         id='starter-date-picker',
             #         min_date_allowed=datetime(2019, 1, 1),
@@ -127,17 +127,17 @@ def block_1():
         ], className='row', style={'margin':'1.5px 12px 0', 'height':'15.5%'}), 
 
         html.Div([
-            html.P('Lengh (in months)', #className='six columns', 
-                    style={'display':'inline-block', 'width':'45%', 'fontSize':'1.6rem'}),
+            html.P('Length (months)', #className='six columns', 
+                    style={'display':'inline-block', 'width':'45%', 'fontSize':'17px'}),
             html.P(id='days-diff', #className='six columns', 
-                    style={'display':'inline-block', 'width':'54%','textAlign':'center', 'fontSize':'1.8rem'})
+                    style={'display':'inline-block', 'width':'54%','textAlign':'center', 'fontSize':'18px'})
         ], className='row', style={'margin':'1.5px 12px 0', 'height':'16.5%'}), 
 
 
         html.Div([
             html.P('Final Date',  
-                   style={'display':'inline-block', 'width':'45%', 'fontSize':'1.6rem'}),
-            html.P(id='dateFinal', style={'textAlign':'center', 'width':'54%', 'float':'right', 'fontSize':'1.8rem'})
+                   style={'display':'inline-block', 'width':'45%', 'fontSize':'17px'}),
+            html.P(id='dateFinal', style={'textAlign':'center', 'width':'54%', 'float':'right', 'fontSize':'18px'})
             # dcc.DatePickerSingle(
             #         id='final-date-picker',
             #         min_date_allowed=datetime(2019, 1, 1),
@@ -154,8 +154,8 @@ def block_1():
         ], className='row', style={'height':'20.5%','padding':'0 15px', 'textAlign':'center'}),
 
         html.Div([
-            html.P('STATUS', className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'1.6rem', 'paddingLeft':'25px'}),
-            html.P('RUNNING', className='six columns', style={'display':'inline-block', 'textAlign':'right', 'fontSize':'1.8rem', 'paddingRight':'25px'})
+            html.P('STATUS', className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'17px', 'paddingLeft':'25px'}),
+            html.P('RUNNING', className='six columns', style={'display':'inline-block', 'textAlign':'right', 'fontSize':'18px', 'paddingRight':'25px'})
         ], className='row', style={'margin':'10px 12px 0', 'height':'15.5%'}), 
 
     ], style={'height':'300px', 'margin':'2.5vh 0 1.5vh'})
@@ -215,7 +215,7 @@ app.layout = html.Div([
                 ])
                 ], className='five columns', style={'float':'right', 'padding':'25px 25px'})
             ], className='row', style={ 'height':'90px', 
-                                       'background':'#4B1D3F',
+                                       'background':'rgb(62, 58, 61)',
                                        'padding':'12px 50px',
                                        'margin':'0px 0px 24px'}),
 
@@ -241,7 +241,7 @@ app.layout = html.Div([
                         html.Div([
                           dcc.Upload(id='upload-tasks', children=[html.Button('Upload File')], style={'width':'80%'}),
                         ], className='five columns')
-                ], className='row', style={'height':'10.5%'}),
+                ], className='row', style={'paddingBottom':'16px'}),
 
                 ## Upload Calendar
                 html.Div([
@@ -251,7 +251,7 @@ app.layout = html.Div([
                         html.Div([
                         dcc.Upload(html.Button('Upload File')),
                         ], className='five columns')
-                ], className='row', style={'height':'10.5%',}),
+                ], className='row', style={'paddingBottom':'16px'}),
 
                 ## Problems Report
                 html.Div([
@@ -261,7 +261,7 @@ app.layout = html.Div([
                         html.Div([
                         dcc.Upload(html.Button('Download', style={'width':'146px'})),
                         ], className='five columns', )
-                ], className='row', style={'height':'10.5%'}),
+                ], className='row', style={'paddingBottom':'16px'}),
                 
                 ## Download Results
                 html.Div([
@@ -271,11 +271,10 @@ app.layout = html.Div([
                         html.Div([
                         dcc.Upload(html.Button('Download', style={'width':'146px'})),
                         ], className='five columns')
-                ], className='row', style={'height':'10.5%'}),
+                ], className='row'),
 
-            ], className='four columns', style={'height':'600px'}),
-
-
+            ], className='four columns', style={
+                                                'marginBottom':'24px'}),
 
             # Block two
             ## Graph part
@@ -286,7 +285,7 @@ app.layout = html.Div([
                         # html.P("SELECT THE GRAPH: ", style={'fontWeight':'bold', 'textAlign':'center', 'color':'rgb(212, 244, 221)'}),
                         drop_down_graph()
                     ], className='eight columns', style={'display':'right', 'height':'100%', 'width':'40%'} )
-                ], className='row', style={'background':'#D62246', 'padding':'24px 35px'   }),
+                ], className='row', style={'background':'#4B1D3F', 'padding':'24px 35px'   }),
                 ## Graph
                 html.Div([
                     dcc.Loading(
@@ -297,7 +296,7 @@ app.layout = html.Div([
                     ])], type='graph', style={'margin':'100px'})
                 ], className='row', style={'width':'100%', 'margin':'15px auto', 'padding':'.5vh 0'}),
             ], className='eight columns', style={'marginLeft':'4%'})
-        ], className='row', style={'width':'100%', 'height':'600px'}),
+        ], className='row', style={'width':'100%',}),
 
         html.Div([
             html.Div([
@@ -320,7 +319,7 @@ app.layout = html.Div([
 def _update_graph1(proj_name):
 
     if proj_name is None:
-        return ["None Selected", "None", "None", "None" ]
+        return ["None Selected", "-", "-", "-" ]
     else: 
         pass
     df = pd.read_csv('data_simulation.csv', index_col=[0])
