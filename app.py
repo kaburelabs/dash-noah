@@ -151,14 +151,14 @@ def block_1():
         html.Div([
             html.Button('Run MCPM', type='submit', id='sql-button',  #className='ten columns', 
                         style={'width':'70%', "background":"#0E7C7B", 'color':'rgb(212, 244, 221)', 'margin':'0 auto', 'height':'90%'})
-        ], className='row', style={'height':'20.5%','padding':'0 15px', 'textAlign':'center'}),
+        ], className='row', style={'height':'20.5%','padding':'0 30px', 'textAlign':'center', 'margin':'0 24px 0 0'}),
 
         html.Div([
             html.P('STATUS', className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'17px', 'paddingLeft':'25px'}),
             html.P('RUNNING', className='six columns', style={'display':'inline-block', 'textAlign':'right', 'fontSize':'18px', 'paddingRight':'25px'})
         ], className='row', style={'margin':'10px 12px 0', 'height':'15.5%'}), 
 
-    ], style={'height':'300px', 'margin':'2.5vh 0 1.5vh'})
+    ], style={'height':'300px', 'margin':'15px 15px'})
 
 
 
@@ -172,7 +172,7 @@ def drop_down_graph():
                 {'label': 'Graph3', 'value': '3'},
                 {'label': 'Problems', 'value':'4'}
             ],
-        value='1'
+        placeholder="Select a Graph"
     )
     ], style={'margin':'0.5vh auto', 'height':'100%'})
 
@@ -382,35 +382,36 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
 @app.callback(Output('graph-princ1','figure'),
               [Input('df-sharing','children'),
                Input('dropdown-graph', 'value')])
-def _update_graph1(df, query):
+def _update_graph1(df, graph):
 
-    if df is None:
+    if graph is None:
         raise PreventUpdate
     else: 
         pass
 
     df_ = pd.read_json(df, orient='split')
 
-    time.sleep(3)
+    time.sleep(2)
 
-    if query == '2':
+    if graph == '2':
         val_count = df_.ints.value_counts().reset_index()
         fig = px.scatter(val_count, x='index', y='ints', title=title_var)
         fig.update_layout(title_x=.5)
         return fig
         
-    elif query == '3':
+    elif graph == '3':
         #val_count = df_.langs.value_counts().reset_index()
         fig = px.box(df_, x='langs', y='float', title=(str(title_var) + str(3)))
         fig.update_layout(title_x=.5)
         return fig
         
-    elif query == '4':
+    elif graph == '4':
         val_count = df_.date.value_counts().reset_index()
         fig = px.line(val_count, x='index', y='date', title=title_var)
 
         fig.update_layout(title_x=.5)
         return fig
+
     else: 
         val_count = df_.langs.value_counts().reset_index()
         fig = px.bar(val_count, x='index', y='langs', title=title_var)
