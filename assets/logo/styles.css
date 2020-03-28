@@ -38,7 +38,7 @@
 .container {
     position: relative;
     width: 100%;
-    max-width: 1140px;
+    max-width: 1260px;
     margin: 0 auto;
     padding: 0 20px;
     box-sizing: border-box; }
@@ -65,7 +65,7 @@
     .container {
       width: 80%; }
     .column,
-    .columns {
+    .columns-t {
       margin-left: 1.5%; }
     .column:first-child,
     .columns:first-child {
@@ -395,7 +395,7 @@
   
   /* Self Clearing Goodness */
   .container:after,
-  .row:after,
+  .row-m:after,
   .u-cf {
     content: "";
     display: table;
