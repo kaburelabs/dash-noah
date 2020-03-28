@@ -80,21 +80,22 @@ def create_header(some_string):
         'width':'100%'
     }
 
-    logo_trich = html.Img(
-                    src=link_logo,
-                    className='three columns',
-                    style={
-                        'height': 'auto',
-                        'width': '140px', # 'padding': 1
-                        'float': 'right', #'position': 'relative'
-                        'margin-right': '66px', #'border-style': 'dotted'
-                        'display':'inline-block'})
+    # logo_trich = html.Img(
+    #                 src=link_logo,
+    #                 className='three columns',
+    #                 style={
+    #                     'height': 'auto',
+    #                     'width': '140px', # 'padding': 1
+    #                     'float': 'right', #'position': 'relative'
+    #                     'margin-right': '66px', #'border-style': 'dotted'
+    #                     'display':'inline-block'})
 
     title = html.H1(children=some_string, className='eight columns',
                     style={'margin':'0 0 0 36px',
                            'color':'#ffffff', 'font-size':'35px'})
 
-    header = html.Header(html.Div([title, logo_trich]), style=header_style)
+    header = html.Header(html.Div([title, #logo_trich
+                                ]), style=header_style)
 
     return header
 
@@ -173,7 +174,7 @@ def drop_down_graph():
     ], style={'margin':'0.5vh auto', 'height':'100%'})
 
 app.layout = html.Div([
-    #create_header("Noah - Run SQL Application"),
+    create_header("Run SQL Web Application"),
     html.Div([
         html.Div(id='df-sharing', style={'display': 'none'}),
         # header logo + select project
@@ -234,10 +235,20 @@ app.layout = html.Div([
                                                 end_date=datetime.today().strftime('%Y-%m-%d'))
                                             ], className='eight columns', style={ 'float':'left', 'fontSize':'17px'}),
                                             html.Div([
-                                                html.Button('Submit', id='submit-new', style={ 'background':'#0E7C7B', 'color':'rgb(212, 244, 221)'})
-                                            ], className='four columns', style={'float':'right', 'textAlign':'center'})
-                                        ], className='row-m m-4')
-                                    ]), style={'background':'#D4F4DD'}),
+                                                html.Button('Submit', id='submit-new', 
+                                                            style={'background':'#0E7C7B', 
+                                                                   'color':'rgb(212, 244, 221)'})
+                                            ], className='four columns', style={'float':'right', 'textAlign':'center'}),
+                                            ], className='row-m m-4'),
+                                            html.Div([
+                                                dbc.Alert(
+                                                    "Your Project was added.",
+                                                    id="alert-auto",
+                                                    #is_open=True,
+                                                    duration=3000,
+                                            )], className='row-m')
+
+                                    ]), ),
                                 dbc.ModalFooter(
                                     dbc.Button("Close", id="close")
                                 ),
@@ -344,7 +355,10 @@ app.layout = html.Div([
         html.Div([
             html.Div([
                 html.Div(id='query-output3', style={'fontSize':'20px', 'width':'100%'})
-            ], className='twelve columns')
+            ], className='twelve columns'),
+        html.Div([
+            html.Div(id='submit-new-conf')
+        ])
         ], className='row-m')
     ], className='container')
 
@@ -400,11 +414,12 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
     else: 
         pass
     print()
-    date_start = pd.to_datetime(date_start, )
-    date_final = pd.to_datetime(date_final)
+    date_start = pd.to_datetime(date_start).date()
+    date_final = pd.to_datetime(date_final).date()
     days_diff = round((date_final - date_start).days / 30)
-    date_start = date_start.date()
-    date_final = date_final.date()
+    # date_start = date_start.date()
+    # date_final = date_final.date()
+
     print(f"SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")
 
 
@@ -426,17 +441,54 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
               [Input('submit-new', 'n_clicks')],
                [State('dropdown-projects', 'options')])
 def _update_dropdown_proj(n_click, two):
-    # print('botão dropdown', n_click)
-    # print('botão dropdown2', two)
+
     time.sleep(1)
 
     df = pd.read_sql_query("SELECT * FROM projs", con)
 
     options=[{'label': i, 'value': i} for i in df['project_name'].to_list()]   
-    # print(options)
 
     return options
 
+
+# @app.callback(Output('submit-new','n_clicks'),
+#              [Input('submit-new-conf','children')])
+# def update(reset):
+#     if reset != None:
+#         return None
+
+@app.callback(
+    Output("modal", "is_open"),
+    [Input('submit-new', 'n_clicks'),
+     Input("open", "n_clicks"),
+     Input("close", "n_clicks")],
+    [State("modal", "is_open")],
+)
+def toggle_modal(button, n1, n2, is_open):
+
+    print("condition: ", (n1 or n2), 'print button: ', button, 'is_open: ', is_open, 'returned: ', (not is_open))
+
+    if (button and is_open):
+        time.sleep(3)
+
+    if n1 or n2:
+        print('estourou1')
+        return not is_open
+
+    print('estourou2')
+
+    return is_open
+
+@app.callback(
+    Output("alert-auto", "is_open"),
+    [Input("submit-new", "n_clicks")],
+    [State("alert-auto", "is_open")],
+)
+def toggle_alert(n, is_open):
+    if n:
+        return not is_open
+
+    return is_open
 
 @app.callback(Output('query-output2', 'children'),
               [Input('submit-new', 'n_clicks')],
@@ -445,13 +497,13 @@ def _update_dropdown_proj(n_click, two):
                State('my-date-picker-range', 'end_date'),
                State('my-date-picker-range', 'start_date')])
 def _update_graph1(click, name, region, end, start):
+
     print(click)
+
     if None in [name, region, start, end]:
         raise PreventUpdate
     else:
         pass
-
-    print(start)
 
     vals = {'project_name': [name], 'StartDate': [start], 'FinalDate':[end], 'Region': [region]}
 
@@ -459,12 +511,8 @@ def _update_graph1(click, name, region, end, start):
 
     df.to_sql("projs", engine, if_exists='append', index=False )
 
-    print(df )
-    
-    return name
-
-
-
+    added_values = df
+    return f"New data Added to the DB: {str(vals)}"
 
 
 @app.callback(Output('graph-princ1','figure'),
@@ -512,16 +560,6 @@ def _update_graph1(df, graph):
         return fig
 
 
-@app.callback(
-    Output("modal", "is_open"),
-    [Input("open", "n_clicks"),
-     Input("close", "n_clicks")],
-    [State("modal", "is_open")],
-)
-def toggle_modal(n1, n2, is_open):
-    if n1 or n2:
-        return not is_open
-    return is_open
 
 
 # def parse_contents(contents, filename, date):
