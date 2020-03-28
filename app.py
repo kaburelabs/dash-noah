@@ -28,7 +28,7 @@ DEVELOPER = config('DEVELOPER', default=False, cast=bool)
 engine = create_engine(DATABASE_URL)
 con = psycopg2.connect(DATABASE_URL)
 
-csv_file = "../Upwork1-Noah-APP/data_simulation.csv"
+csv_file = "data_simulation.csv"
 df = pd.read_csv(csv_file, index_col=[0])
 
 if DEVELOPER:
@@ -429,10 +429,12 @@ def _update_dropdown_proj(n_click, two):
     # print('botão dropdown', n_click)
     # print('botão dropdown2', two)
     time.sleep(1)
+
     df = pd.read_sql_query("SELECT * FROM projs", con)
 
     options=[{'label': i, 'value': i} for i in df['project_name'].to_list()]   
     # print(options)
+
     return options
 
 
