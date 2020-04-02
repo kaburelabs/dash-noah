@@ -17,6 +17,12 @@ from sqlalchemy import create_engine
 import psycopg2
 from sqlalchemy_utils import database_exists, create_database
 from decouple import config
+import dash_auth
+import requests 
+
+VALID_USERNAME_PASSWORD_PAIRS = {
+    'admin': 'admin',
+    'noah':'silver123'}
 
 app_name = "Noah app"
 
@@ -31,6 +37,7 @@ con = psycopg2.connect(DATABASE_URL)
 csv_file = "data_simulation.csv"
 df = pd.read_csv(csv_file, index_col=[0])
 
+
 if DEVELOPER:
     # if the database does not exist
     if not database_exists(engine.url):
@@ -44,20 +51,28 @@ except:
     del df
     print("An exception occurred")
 
-
 # print(df_to_db)
 ## CSS EXTERNAL FILE
 external_stylesheets = [dbc.themes.BOOTSTRAP, 
                         'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
                         'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css']
 
+
 ## Defining the instance of dash
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets,# external_scripts=scripts_jquery
+)
 
 app.title = app_name
 
 # server instance to run map when deploying
 server = app.server
+
+
+# authentication module 
+auth = dash_auth.BasicAuth(
+    app,
+    VALID_USERNAME_PASSWORD_PAIRS
+)
 
 # Since I am adding callbacks to elements that don’t ~
 # exist in the app.layout as they are spread throughout files
@@ -169,6 +184,7 @@ def drop_down_graph():
                 {'label': 'Graph3', 'value': '3'},
                 {'label': 'Problems', 'value':'4'}
             ],
+        value=1,
         placeholder="Select a Graph"
     )
     ], style={'margin':'0.5vh auto', 'height':'100%'})
@@ -225,15 +241,16 @@ app.layout = html.Div([
                                         ], className='row-m'),
 
                                         html.Div([
+
                                             html.Div([
                                                 dcc.DatePickerRange(
                                                 id='my-date-picker-range',
                                                 min_date_allowed=datetime(2015, 1, 1),
                                                 max_date_allowed=datetime.today().strftime('%Y-%m-%d'),
                                                 initial_visible_month=datetime(2019, 1, 1),
-
                                                 end_date=datetime.today().strftime('%Y-%m-%d'))
                                             ], className='eight columns', style={ 'float':'left', 'fontSize':'17px'}),
+
                                             html.Div([
                                                 html.Button('Submit', id='submit-new', 
                                                             style={'background':'#0E7C7B', 
@@ -392,10 +409,9 @@ def _update_graph1(proj_name):
     final = df[mask].to_dict('row')[0]
 
     return [final['project_name'], 
-            final['StartDate'].strftime('%d-%m-%Y'), 
+            final['StartDate'].strftime('%m-%Y'), 
             final['diff'], 
-            final['FinalDate'].strftime('%d-%m-%Y')]
-
+            final['FinalDate'].strftime('%m-%Y')]
 
 
 @app.callback([Output('df-sharing','children'),
@@ -435,11 +451,12 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
 
     return [df.to_json(date_format='iso', orient='split'), 
             (f"QUERY SIMULATION: SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")]
-    
+
+
 
 @app.callback(Output('dropdown-projects', 'options'),
               [Input('submit-new', 'n_clicks')],
-               [State('dropdown-projects', 'options')])
+              [State('dropdown-projects', 'options')])
 def _update_dropdown_proj(n_click, two):
 
     time.sleep(1)
@@ -466,18 +483,21 @@ def _update_dropdown_proj(n_click, two):
 )
 def toggle_modal(button, n1, n2, is_open):
 
-    print("condition: ", (n1 or n2), 'print button: ', button, 'is_open: ', is_open, 'returned: ', (not is_open))
+    # print("condition: ", (n1 or n2), 'print button: ', button, 'is_open: ', is_open, 'returned: ', (not is_open))
 
     if (button and is_open):
         time.sleep(3)
 
     if n1 or n2:
-        print('estourou1')
         return not is_open
 
-    print('estourou2')
-
     return is_open
+
+
+# @app.callback(Output('input_button','n_clicks'),
+#              [Input('reset_button','n_clicks')])
+# def update(reset):
+#     return 0
 
 @app.callback(
     Output("alert-auto", "is_open"),
@@ -498,7 +518,7 @@ def toggle_alert(n, is_open):
                State('my-date-picker-range', 'start_date')])
 def _update_graph1(click, name, region, end, start):
 
-    print(click)
+    # print(click)
 
     if None in [name, region, start, end]:
         raise PreventUpdate
@@ -652,12 +672,13 @@ if __name__ == '__main__':
 
 
 
-
-
-
-
-
-
-
-
-
+# 2020-03-31T19:18:09.245597+00:00 app[worker.1]: Writing tweet # 70500 to the database
+# 2020-03-31T19:18:59.824405+00:00 heroku[web.1]: Idling
+# 2020-03-31T19:18:59.828489+00:00 heroku[web.1]: State changed from up to down
+# 2020-03-31T19:18:59.844186+00:00 heroku[worker.1]: State changed from up to down
+# 2020-03-31T19:19:00.758323+00:00 app[web.1]: [2020-03-31 19:19:00 +0000] [10] [INFO] Worker exiting (pid: 10)
+# 2020-03-31T19:19:00.758330+00:00 app[web.1]: [2020-03-31 19:19:00 +0000] [11] [INFO] Worker exiting (pid: 11)
+# 2020-03-31T19:19:00.861173+00:00 app[web.1]: [2020-03-31 19:19:00 +0000] [4] [INFO] Handling signal: term
+# 2020-03-31T19:19:00.982205+00:00 app[web.1]: [2020-03-31 19:19:00 +0000] [4] [INFO] Shutting down: Master
+# 2020-03-31T19:19:01.437469+00:00 heroku[worker.1]: Stopping all processes with SIGTERM
+# 2020-03-31T19:19:01.580101+00:00 heroku[worker.1]: Process exited with status 143
