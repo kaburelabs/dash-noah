@@ -352,9 +352,8 @@ app.layout = html.Div([
                     dcc.Loading(
                         id="loading-2",
                         children=[
-                            html.Div([
-                                dcc.Graph(id='graph-princ1', style={'width':'100%', 'height':'450px'})
-                    ])], type='graph', style={'margin':'100px'})
+                            html.Div(id='outputbox')
+                    ], type='graph', style={'margin':'100px'})
                 ], className='row-m', style={'width':'100%', 'margin':'15px auto', 'padding':'.5vh 0'}),
             ], className='eight columns', style={'marginLeft':'4%'})
         ], className='row-m', style={'width':'100%',}),
@@ -535,7 +534,7 @@ def _update_graph1(click, name, region, end, start):
     return f"New data Added to the DB: {str(vals)}"
 
 
-@app.callback(Output('graph-princ1','figure'),
+@app.callback(Output('outputbox','children'),
               [Input('df-sharing','children'),
                Input('dropdown-graph', 'value')])
 def _update_graph1(df, graph):
@@ -558,26 +557,29 @@ def _update_graph1(df, graph):
         val_count = df_.ints.value_counts().reset_index()
         fig = px.scatter(val_count, x='index', y='ints', title=title_var)
         fig.update_layout(title_x=.5)
-        return fig
+
+        return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
         
     elif graph == '3':
         #val_count = df_.langs.value_counts().reset_index()
         fig = px.box(df_, x='langs', y='float', title=(str(title_var) + str(3)))
         fig.update_layout(title_x=.5)
-        return fig
+
+        return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
         
     elif graph == '4':
-        val_count = df_.date.value_counts().reset_index()
-        fig = px.line(val_count, x='index', y='date', title=title_var)
-
-        fig.update_layout(title_x=.5)
-        return fig
+             
+        return dt.DataTable(
+               id='table',
+               columns=[{"name": i, "id": i} for i in df_.columns],
+               data=df_.head().to_dict('records'))
 
     else: 
         val_count = df_.langs.value_counts().reset_index()
         fig = px.bar(val_count, x='index', y='langs', title=title_var)
         fig.update_layout(title_x=.5)       
-        return fig
+
+        return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
 
 
 
