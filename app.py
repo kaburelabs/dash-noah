@@ -558,28 +558,29 @@ def _update_graph1(df, graph):
         fig = px.scatter(val_count, x='index', y='ints', title=title_var)
         fig.update_layout(title_x=.5)
 
-        return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
+        return html.Div([dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})])
         
     elif graph == '3':
         #val_count = df_.langs.value_counts().reset_index()
         fig = px.box(df_, x='langs', y='float', title=(str(title_var) + str(3)))
         fig.update_layout(title_x=.5)
 
-        return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
+        return html.Div([dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})])
         
     elif graph == '4':
-             
-        return dt.DataTable(
-               id='table',
-               columns=[{"name": i, "id": i} for i in df_.columns],
-               data=df_.head().to_dict('records'))
+
+        return html.Div([html.P("Problems Table: ", style={'fontSize':'18px', 'textAlign':'center'}),
+                         dt.DataTable(
+                            id='table',
+                            columns=[{"name": i, "id": i} for i in df_.columns],
+                            data=df_.head().to_dict('records'))])
 
     else: 
         val_count = df_.langs.value_counts().reset_index()
         fig = px.bar(val_count, x='index', y='langs', title=title_var)
         fig.update_layout(title_x=.5)       
 
-        return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
+        return html.Div([dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})])
 
 
 
