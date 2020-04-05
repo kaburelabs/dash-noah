@@ -20,9 +20,9 @@ from decouple import config
 import dash_auth
 import requests 
 
-VALID_USERNAME_PASSWORD_PAIRS = {
-    'admin': 'admin',
-    'noah':'silver123'}
+# VALID_USERNAME_PASSWORD_PAIRS = {
+#     'admin': 'admin',
+#     'noah':'silver123'}
 
 app_name = "Noah app"
 
@@ -68,11 +68,11 @@ app.title = app_name
 server = app.server
 
 
-# authentication module 
-auth = dash_auth.BasicAuth(
-    app,
-    VALID_USERNAME_PASSWORD_PAIRS
-)
+# # authentication module 
+# auth = dash_auth.BasicAuth(
+#     app,
+#     VALID_USERNAME_PASSWORD_PAIRS
+# )
 
 # Since I am adding callbacks to elements that don’t ~
 # exist in the app.layout as they are spread throughout files
@@ -459,7 +459,7 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
 def _update_dropdown_proj(n_click, two):
 
     time.sleep(1)
-
+    print("rodou")
     df = pd.read_sql_query("SELECT * FROM projs", con)
 
     options=[{'label': i, 'value': i} for i in df['project_name'].to_list()]   
@@ -485,7 +485,7 @@ def toggle_modal(button, n1, n2, is_open):
     # print("condition: ", (n1 or n2), 'print button: ', button, 'is_open: ', is_open, 'returned: ', (not is_open))
 
     if (button and is_open):
-        time.sleep(3)
+        time.sleep(1)
 
     if n1 or n2:
         return not is_open
@@ -544,45 +544,40 @@ def _update_graph1(df, graph):
     else: 
         pass
 
-    if graph is None:
-        raise PreventUpdate
-    else: 
-        pass
-
     df_ = pd.read_json(df, orient='split')
+    graph = str(graph)
 
-    time.sleep(2)
+    print(graph, type(graph))
 
-    if graph == '2':
-        val_count = df_.ints.value_counts().reset_index()
-        fig = px.scatter(val_count, x='index', y='ints', title=title_var)
-        fig.update_layout(title_x=.5)
-
-        return html.Div([dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})])
-        
-    elif graph == '3':
-        #val_count = df_.langs.value_counts().reset_index()
-        fig = px.box(df_, x='langs', y='float', title=(str(title_var) + str(3)))
-        fig.update_layout(title_x=.5)
-
-        return html.Div([dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})])
-        
-    elif graph == '4':
-
-        return html.Div([html.P("Problems Table: ", style={'fontSize':'18px', 'textAlign':'center'}),
-                         dt.DataTable(
-                            id='table',
-                            columns=[{"name": i, "id": i} for i in df_.columns],
-                            data=df_.head().to_dict('records'))])
-
-    else: 
+    if graph == '1': 
+        # print('graph 1')
         val_count = df_.langs.value_counts().reset_index()
         fig = px.bar(val_count, x='index', y='langs', title=title_var)
         fig.update_layout(title_x=.5)       
 
         return html.Div([dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})])
 
-
+    elif graph == '2':
+        val_count = df_.ints.value_counts().reset_index()
+        fig = px.scatter(val_count, x='index', y='ints', title=title_var)
+        fig.update_layout(title_x=.5)
+        # print('graph 2')
+        return html.Div([dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})])
+        
+    elif graph == '3':
+        #val_count = df_.langs.value_counts().reset_index()
+        fig = px.box(df_, x='langs', y='float', title=(str(title_var) + str(3)))
+        fig.update_layout(title_x=.5)
+        # print('graph 3')
+        return html.Div([dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})])
+        
+    elif graph == '4':
+        # print('tab')
+        return [html.P("Problems Table: ", style={'fontSize':'18px', 'textAlign':'center'}),
+                         dt.DataTable(
+                            id='table',
+                            columns=[{"name": i, "id": i} for i in df_.columns],
+                            data=df_.head().to_dict('records'))]
 
 
 # def parse_contents(contents, filename, date):
