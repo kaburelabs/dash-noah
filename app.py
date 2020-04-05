@@ -166,8 +166,8 @@ def block_1():
         ], className='row-m', style={'height':'20.5%','padding':'0 30px', 'textAlign':'center', 'margin':'0 24px 0 0'}),
 
         html.Div([
-            html.P('STATUS', className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'17px', 'paddingLeft':'25px'}),
-            html.P('RUNNING', className='six columns', style={'display':'inline-block', 'textAlign':'right', 'fontSize':'18px', 'paddingRight':'25px'})
+            html.P('Task Name', className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'17px', 'paddingLeft':'25px'}),
+            html.P("None", id='task-name-upload', className='six columns', style={'display':'inline-block', 'textAlign':'right', 'fontSize':'18px', 'paddingRight':'25px'})
         ], className='row-m', style={'margin':'10px 12px 0', 'height':'15.5%'}), 
 
     ], style={'height':'300px', 'margin':'15px 15px'})
@@ -459,7 +459,7 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
 def _update_dropdown_proj(n_click, two):
 
     time.sleep(1)
-    print("rodou")
+
     df = pd.read_sql_query("SELECT * FROM projs", con)
 
     options=[{'label': i, 'value': i} for i in df['project_name'].to_list()]   
@@ -545,9 +545,6 @@ def _update_graph1(df, graph):
         pass
 
     df_ = pd.read_json(df, orient='split')
-    graph = str(graph)
-
-    print(graph, type(graph))
 
     if graph == '1': 
         # print('graph 1')
@@ -580,47 +577,6 @@ def _update_graph1(df, graph):
                             data=df_.head().to_dict('records'))]
 
 
-# def parse_contents(contents, filename, date):
-
-#     content_type, content_string = contents.split(',')
-
-#     decoded = base64.b64decode(content_string)
-#     try:
-#         if 'csv' in filename:
-#             # Assume that the user uploaded a CSV file
-#             df = pd.read_csv(
-#                 io.StringIO(decoded.decode('utf-8')))
-#         elif 'xls' in filename:
-#             # Assume that the user uploaded an excel file
-#             df = pd.read_excel(io.BytesIO(decoded))
-#     except Exception as e:
-#         print(e)
-#         return html.Div([
-#             'There was an error processing this file.'
-#         ])
-
-#     return html.Div([
-#                 html.H5(filename),
-#                 html.H6(datetime.datetime.fromtimestamp(date)),
-#                 dash_table.DataTable(
-#                     data=df.head().to_dict('records'),
-#                     columns=[{'name': i, 'id': i} for i in df.columns]
-#                 )
-#                 ])
-
-# @app.callback(Output('query-output3', 'children'),
-#               [Input('upload-tasks', 'contents')],
-#               [State('upload-tasks', 'filename'),
-#                State('upload-tasks', 'last_modified')])
-# def update_output(list_of_contents, list_of_names, list_of_dates):
-#     print('upload tasks ',list_of_contents)
-#     if list_of_contents is not None:
-#         children = [
-#             parse_contents(c, n, d) for c, n, d in zip(list_of_contents, list_of_names, list_of_dates)
-#         ]
-#         return children
-
-
 def parse_contents(contents, filename, date):
     
     content_type, content_string = contents.split(',')
@@ -641,29 +597,24 @@ def parse_contents(contents, filename, date):
             'There was an error processing this file.'
         ])
 
-    return html.Div([
-        html.H3(f'File Name: {filename}', style={'textAlign':'center'}),
-        html.H6(f"Last Modification Date: {datetime.fromtimestamp(date)}"),
+    return filename
 
-        dt.DataTable(
-            data=df.head().to_dict('records'),
-            columns=[{'name': i, 'id': i} for i in df.columns], 
-            style_table={'overflowX': 'scroll'}, 
-            style_cell={"minWidth":"20px"},
-        )
-    ])
 
-@app.callback(Output('query-output3', 'children'),
+@app.callback(Output('task-name-upload', 'children'),
               [Input('upload-tasks', 'contents')],
               [State('upload-tasks', 'filename'),
                State('upload-tasks', 'last_modified')])
 def update_output(list_of_contents, list_of_names, list_of_dates):
+    if list_of_names is None:
+        return  "-" 
+
     if list_of_contents is not None:
         children = [
             parse_contents(c, n, d) for c, n, d in
             zip(list_of_contents, list_of_names, list_of_dates)
         ]
         return children
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
