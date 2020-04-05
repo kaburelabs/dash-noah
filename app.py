@@ -545,36 +545,37 @@ def _update_graph1(df, graph):
         pass
 
     df_ = pd.read_json(df, orient='split')
+    
+    graph = str(graph)
 
     if graph == '1': 
         # print('graph 1')
         val_count = df_.langs.value_counts().reset_index()
-        fig = px.bar(val_count, x='index', y='langs', title=title_var)
+        fig = px.bar(val_count, x='index', y='langs', title="graph bar 1")
         fig.update_layout(title_x=.5)       
 
-        return html.Div([dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})])
+        return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
 
     elif graph == '2':
         val_count = df_.ints.value_counts().reset_index()
-        fig = px.scatter(val_count, x='index', y='ints', title=title_var)
+        fig = px.bar(val_count, x='index', y='ints', title="graph bar 2")
         fig.update_layout(title_x=.5)
         # print('graph 2')
-        return html.Div([dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})])
+        return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
         
     elif graph == '3':
         #val_count = df_.langs.value_counts().reset_index()
-        fig = px.box(df_, x='langs', y='float', title=(str(title_var) + str(3)))
+        fig = px.bar(df_, x='langs', y='float', title=(str("graph bar ") + str(3)))
         fig.update_layout(title_x=.5)
         # print('graph 3')
-        return html.Div([dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})])
+        return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
         
     elif graph == '4':
         # print('tab')
-        return [html.P("Problems Table: ", style={'fontSize':'18px', 'textAlign':'center'}),
-                         dt.DataTable(
+        return dt.DataTable(
                             id='table',
                             columns=[{"name": i, "id": i} for i in df_.columns],
-                            data=df_.head().to_dict('records'))]
+                            data=df_.head().to_dict('records'))
 
 
 def parse_contents(contents, filename, date):
