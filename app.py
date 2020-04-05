@@ -166,8 +166,8 @@ def block_1():
         ], className='row-m', style={'height':'20.5%','padding':'0 30px', 'textAlign':'center', 'margin':'0 24px 0 0'}),
 
         html.Div([
-            html.P('Task Name', className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'17px', 'paddingLeft':'25px'}),
-            html.P("None", id='task-name-upload', className='six columns', style={'display':'inline-block', 'textAlign':'right', 'fontSize':'18px', 'paddingRight':'25px'})
+            html.P(id='task-name-placeholder', className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'17px', 'paddingLeft':'25px'}),
+            html.P(id='task-name-upload', className='six columns', style={'display':'inline-block', 'textAlign':'right', 'fontSize':'18px', 'paddingRight':'25px'})
         ], className='row-m', style={'margin':'10px 12px 0', 'height':'15.5%'}), 
 
     ], style={'height':'300px', 'margin':'15px 15px'})
@@ -428,15 +428,15 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
         raise PreventUpdate
     else: 
         pass
-    print()
+
     date_start = pd.to_datetime(date_start).date()
     date_final = pd.to_datetime(date_final).date()
+
     days_diff = round((date_final - date_start).days / 30)
     # date_start = date_start.date()
     # date_final = date_final.date()
 
     print(f"SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")
-
 
     # df = pd.read_sql('SELECT * FROM tweets')
     # print('balbablablalbal', run_query, date_start, date_final)
@@ -601,20 +601,22 @@ def parse_contents(contents, filename, date):
     return filename
 
 
-@app.callback(Output('task-name-upload', 'children'),
+@app.callback([Output('task-name-upload', 'children'),
+               Output('task-name-placeholder', 'children')],
               [Input('upload-tasks', 'contents')],
               [State('upload-tasks', 'filename'),
                State('upload-tasks', 'last_modified')])
 def update_output(list_of_contents, list_of_names, list_of_dates):
+
     if list_of_names is None:
-        return  "-" 
+        return  ["RUNNING", "STATUS: "]
 
     if list_of_contents is not None:
         children = [
             parse_contents(c, n, d) for c, n, d in
             zip(list_of_contents, list_of_names, list_of_dates)
         ]
-        return children
+        return [children, "UPLOADED TASK: "]
 
 
 if __name__ == '__main__':
