@@ -167,7 +167,7 @@ def block_1():
 
         html.Div([
             html.P("STATUS: ", className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'17px', 'paddingLeft':'25px'}),
-            html.P("RUNNIING", className='six columns', style={'display':'inline-block', 'textAlign':'right', 'fontSize':'18px', 'paddingRight':'25px'})
+            html.P("RUNNING", className='six columns', style={'display':'inline-block', 'textAlign':'right', 'fontSize':'18px', 'paddingRight':'25px'})
         ], className='row-m', style={'margin':'10px 12px 0', 'height':'15.5%'}), 
 
     ], style={'height':'300px', 'margin':'15px 15px'})
@@ -452,11 +452,11 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
     # print('balbablablalbal', run_query, date_start, date_final)
 
     df = pd.DataFrame({ 
-        'float': np.random.randn(50),
-        'ints': np.random.choice( [5, 7, 8, 18, 20, 5, 3, 14, ], 50),
-        'langs': np.random.choice( ['panda','python','shark', 'C#', 'Java', 'javascript', 'C++', 'SQL', 'Spark'], 50),
+        'float': np.random.randn(15),
+        'ints': np.random.choice( [5, 7, 8, 18, 20, 5, 3, 14, ], 15),
+        'langs': np.random.choice( ['panda','python','shark', 'C#', 'Java', 'javascript', 'C++', 'SQL', 'Spark'], 15),
         'date': np.random.choice(pd.date_range('1/1/2011', periods=365, 
-                                 freq='D'), 50, replace=False)})
+                                 freq='D'), 15, replace=False)})
 
     return [df.to_json(date_format='iso', orient='split'), 
             (f"QUERY SIMULATION: SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")]
@@ -470,7 +470,6 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
 def _update_dropdown_proj(n_click):
 
     time.sleep(.5)
-   # print('testando aqui', two)
 
     df = pd.read_sql_query("SELECT * FROM projs", con)
 
@@ -552,7 +551,7 @@ def _update_graph1(click, name, region, end, start):
 def _update_graph1(df, graph):
 
     if df is None:
-        print('foi')
+        print('df none - graphs')
         raise PreventUpdate
     else: 
         pass
