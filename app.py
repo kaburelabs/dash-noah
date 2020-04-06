@@ -166,8 +166,8 @@ def block_1():
         ], className='row-m', style={'height':'20.5%','padding':'0 30px', 'textAlign':'center', 'margin':'0 24px 0 0'}),
 
         html.Div([
-            html.P(id='task-name-placeholder', className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'17px', 'paddingLeft':'25px'}),
-            html.P(id='task-name-upload', className='six columns', style={'display':'inline-block', 'textAlign':'right', 'fontSize':'18px', 'paddingRight':'25px'})
+            html.P("STATUS: ", className='six columns', style={'display':'inline-block', 'fontWeight':'bold', 'fontSize':'17px', 'paddingLeft':'25px'}),
+            html.P("RUNNIING", className='six columns', style={'display':'inline-block', 'textAlign':'right', 'fontSize':'18px', 'paddingRight':'25px'})
         ], className='row-m', style={'margin':'10px 12px 0', 'height':'15.5%'}), 
 
     ], style={'height':'300px', 'margin':'15px 15px'})
@@ -296,12 +296,22 @@ app.layout = html.Div([
 
                 ## Upload Tasks
                 html.Div([
+                    html.Div([
                         html.Div([
                             html.P("Upload Tasks", style={'margin':'8px 0'}),
                         ], className='seven columns', style={'fontSize':'1.6rem'}),
                         html.Div([
                             dcc.Upload(id='upload-tasks', children=html.Button('Upload File'), multiple=True, style={'width':'80%'}),
                         ], className='five columns')
+                        ], className='row-m'),
+                    html.Div([
+                        html.Div([
+                            html.P(id='upload-placeholder', style={'margin':'8px 0'}),
+                        ], className='seven columns', style={'fontSize':'1.6rem'}),
+                        html.Div([
+                            html.P(id='upload-name'),
+                        ], className='five columns')
+                        ], className='row-m'),      
                 ], className='row-m', style={'paddingBottom':'16px'}),
 
                 ## Upload Calendar
@@ -455,10 +465,12 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
 
 @app.callback(Output('dropdown-projects', 'options'),
               [Input('submit-new', 'n_clicks')],
-              [State('dropdown-projects', 'options')])
-def _update_dropdown_proj(n_click, two):
+              #[State('dropdown-projects', 'options')]
+              )
+def _update_dropdown_proj(n_click):
 
-    time.sleep(1)
+    time.sleep(.5)
+   # print('testando aqui', two)
 
     df = pd.read_sql_query("SELECT * FROM projs", con)
 
@@ -484,8 +496,8 @@ def toggle_modal(button, n1, n2, is_open):
 
     # print("condition: ", (n1 or n2), 'print button: ', button, 'is_open: ', is_open, 'returned: ', (not is_open))
 
-    if (button and is_open):
-        time.sleep(1)
+    # if (button and is_open):
+    #     time.sleep(1)
 
     if n1 or n2:
         return not is_open
@@ -540,6 +552,7 @@ def _update_graph1(click, name, region, end, start):
 def _update_graph1(df, graph):
 
     if df is None:
+        print('foi')
         raise PreventUpdate
     else: 
         pass
@@ -549,31 +562,25 @@ def _update_graph1(df, graph):
     graph = str(graph)
 
     if graph == '1': 
-        # print('graph 1')
         val_count = df_.langs.value_counts().reset_index()
         fig = px.bar(val_count, x='index', y='langs', title="graph bar 1")
         fig.update_layout(title_x=.5)       
-
         return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
 
     elif graph == '2':
         val_count = df_.ints.value_counts().reset_index()
         fig = px.bar(val_count, x='index', y='ints', title="graph bar 2")
         fig.update_layout(title_x=.5)
-        # print('graph 2')
         return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
         
     elif graph == '3':
         #val_count = df_.langs.value_counts().reset_index()
         fig = px.bar(df_, x='langs', y='float', title=(str("graph bar ") + str(3)))
         fig.update_layout(title_x=.5)
-        # print('graph 3')
         return dcc.Graph(figure=fig, style={'width':'100%', 'height':'450px'})
         
     elif graph == '4':
-        # print('tab')
-        return dt.DataTable(
-                            id='table',
+        return dt.DataTable(id='table',
                             columns=[{"name": i, "id": i} for i in df_.columns],
                             data=df_.head().to_dict('records'))
 
@@ -592,6 +599,7 @@ def parse_contents(contents, filename, date):
         elif 'xls' in filename:
             # Assume that the user uploaded an excel file
             df = pd.read_excel(io.BytesIO(decoded))
+
     except Exception as e:
         print(e)
         return html.Div([
@@ -601,22 +609,23 @@ def parse_contents(contents, filename, date):
     return filename
 
 
-@app.callback([Output('task-name-upload', 'children'),
-               Output('task-name-placeholder', 'children')],
+@app.callback([Output('upload-name', 'children'),
+               Output('upload-placeholder', 'children')],
               [Input('upload-tasks', 'contents')],
               [State('upload-tasks', 'filename'),
                State('upload-tasks', 'last_modified')])
 def update_output(list_of_contents, list_of_names, list_of_dates):
-
-    if list_of_names is None:
-        return  ["RUNNING", "STATUS: "]
+    if list_of_contents is None:
+            raise PreventUpdate
+    else: 
+        pass
 
     if list_of_contents is not None:
         children = [
             parse_contents(c, n, d) for c, n, d in
             zip(list_of_contents, list_of_names, list_of_dates)
         ]
-        return [children, "UPLOADED TASK: "]
+        return children, "Task Uploaded Name: "
 
 
 if __name__ == '__main__':
