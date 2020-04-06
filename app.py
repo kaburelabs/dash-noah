@@ -37,7 +37,6 @@ con = psycopg2.connect(DATABASE_URL)
 csv_file = "data_simulation.csv"
 df = pd.read_csv(csv_file, index_col=[0])
 
-
 if DEVELOPER:
     # if the database does not exist
     if not database_exists(engine.url):
@@ -57,6 +56,13 @@ external_stylesheets = [dbc.themes.BOOTSTRAP,
                         'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
                         'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css']
 
+
+df_graphs = pd.DataFrame({ 
+    'float': np.random.randn(15),
+    'ints': np.random.choice( [5, 7, 8, 18, 20, 5, 3, 14, ], 15),
+    'langs': np.random.choice( ['panda','python','shark', 'C#', 'Java', 'javascript', 'C++', 'SQL', 'Spark'], 15),
+    'date': np.random.choice(pd.date_range('1/1/2011', periods=365, 
+                                freq='D'), 15, replace=False)})
 
 ## Defining the instance of dash
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets,# external_scripts=scripts_jquery
@@ -310,7 +316,7 @@ app.layout = html.Div([
                         ], className='seven columns', style={'fontSize':'1.6rem'}),
                         html.Div([
                             html.P(id='upload-name'),
-                        ], className='five columns')
+                        ], className='five columns', style={'padding':'9px 0 0'})
                         ], className='row-m'),      
                 ], className='row-m', style={'paddingBottom':'16px'}),
 
@@ -451,14 +457,7 @@ def _update_graph1(run_button, date_start, date_final, proj_name):
     # df = pd.read_sql('SELECT * FROM tweets')
     # print('balbablablalbal', run_query, date_start, date_final)
 
-    df = pd.DataFrame({ 
-        'float': np.random.randn(15),
-        'ints': np.random.choice( [5, 7, 8, 18, 20, 5, 3, 14, ], 15),
-        'langs': np.random.choice( ['panda','python','shark', 'C#', 'Java', 'javascript', 'C++', 'SQL', 'Spark'], 15),
-        'date': np.random.choice(pd.date_range('1/1/2011', periods=365, 
-                                 freq='D'), 15, replace=False)})
-
-    return [df.to_json(date_format='iso', orient='split'), 
+    return [df_graphs.to_json(date_format='iso', orient='split'), 
             (f"QUERY SIMULATION: SELECT * FROM {proj_name} WHERE date >= {date_start} and date <= {date_final}")]
 
 
